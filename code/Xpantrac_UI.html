@@ -1,0 +1,676 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<!-- 
+Name: Seungwon Yang
+Date: October, 2013
+Note: This prototype tool was developed as part of Seungwon Yang's dissertation study.
+-->
+	<title>Xpantrac Demo</title>
+
+	<link type="text/css" rel="Stylesheet" href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.10/themes/redmond/jquery-ui.css" />
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="jquery.layout.js"></script>
+	<script type="text/javascript" src="js/complex.js"></script>
+    <!-- <script src="http://d3js.org/d3.v2.js"></script> -->
+    <script src="../d3/d3.v2.js"></script>
+	<style type="text/css">
+	/**
+	 *	Basic Layout Theme
+	 * 
+	 *	This theme uses the default layout class-names for all classes
+	 *	Add any 'custom class-names', from options: paneClass, resizerClass, togglerClass
+	 */
+
+	.ui-layout-pane { /* all 'panes' */ 
+		background: #FFF; 
+		border: 1px solid #BBB;
+		/*border: 1px solid green;*/ 
+		/*padding: 6px; */
+		padding-bottom: 10px;
+		/*overflow: auto;*/
+	} 
+	/**
+	 *	ALL CSS below is only for cosmetic and demo purposes
+	 *	Nothing here affects the appearance of the layout
+	 */
+
+	body {
+		/*font-family: Arial, sans-serif;*/
+		/*font-family: Calibri, sans-serif;*/
+		font-family: Eurostile;
+		/*font-size: 0.95em;*/
+		font-size: 0.90em;
+	}
+	p {
+		/* space between lines in a paragraph*/
+		margin: 2px 0;
+	}
+
+	/*
+	 *	Rules below are for simulated drop-down/pop-up lists
+	 */
+
+	ul {
+		/* rules common to BOTH inner and outer UL */
+		z-index:	100000;
+		margin:		1ex 0;
+		padding:	0;
+		list-style:	none;
+		cursor:		pointer;
+		border:		1px solid Black;
+		/* rules for outer UL only */
+		width:		15ex;
+		position:	relative;
+
+	}
+	ul li {
+		background-color: #EEE;
+		padding: 0.15em 1em 0.3em 5px;
+	}
+	ul ul {
+		display:	none;
+		position:	absolute;
+		width:		100%;
+		left:		-1px;
+		/* Pop-Up */
+		bottom:		0;
+		margin:		0;
+		margin-bottom: 1.55em;
+	}
+	.ui-layout-north ul ul {
+		/* Drop-Down */
+		bottom:		auto;
+		margin:		0;
+		/*margin-top:	1.45em;*/
+		margin-top:	1em;
+	}
+	.ui-layout-east {
+		font-family:Eurostile;
+		/*font-size: 0.9em;*/
+		font-size: 1em;
+		text-align:justify;
+		/*padding:10px;*/
+	}
+	.ui-layout-center {
+		font-family:Eurostile;
+		/*font-size: 0.9em;*/
+		font-size: 1em;
+		text-align:justify;
+		/*padding:10px;*/
+	}
+	.multiColumn {
+		display: inline-block;
+		vertical-align: middle;
+		width:150px;
+		height:30px;
+		margin-right: 10px;
+		/*border: 1px solid green;*/
+		border: 1px solid gray;
+		position:relative;
+		font-size: 1.2em;
+		background-color: aliceblue;
+	}
+	#singleText {
+		padding:10px;
+		width:auto;
+		height:700px;
+		font-size:1.1em;
+		color:black;
+		overflow:auto;
+		overflow-x:hidden;
+	}
+	#paddingBox {
+		padding:10px;
+	}
+	#slider_1 {
+		cursor: default;
+		height: 0.5em;
+		/*position: absolute;*/
+		width: 12em;
+		z-index: 1;
+	}
+	#slider_2 {
+		cursor: default;
+		height: 0.5em;
+		/*position: absolute;*/
+		width: 22em;
+		z-index: 2;
+	}
+	#slider_3 {
+		cursor: default;
+		height: 0.5em;
+		/*position: absolute;*/
+		width: 16em;
+		z-index: 3;
+	}
+	ul ul li		{ padding: 3px 1em 3px 5px; }
+	ul ul li:hover	{ background-color: #FF9; }
+	ul li:hover ul	{ display:	block; background-color: #EEE; }
+	#results {
+		width:auto;
+		height:700px;
+		overflow: auto;
+		overflow-x: hidden;
+	}
+	div.bar {
+		display: inline-block;
+		width:322px;
+		height: 40px;
+		margin-bottom: 2px;
+/*		background-color: #DEDEDE;   */
+		background-color: #F0F0F0;   
+		/*background-color: #FFF;   */
+		border: 1px solid gray;
+		padding: 3px;
+		padding-left:5px;
+		font-family: Eurostile;
+		/*font-size: 0.95em;*/
+		font-size: 1.0em;
+		cursor: pointer;  
+	}
+	div.leftSubBar {
+		/*border: 1px solid green;*/
+		width:184px;
+		height: 30px;
+		float:left;
+	}
+    div.topBox {
+    	height:40px;
+    	margin-bottom: 2px;
+    	background-color: navy;
+    	color:white;
+    	padding:3px;
+    }
+    #topBoxCenter {
+    	font-size: 0.8em;
+    }
+    #bufferBox {
+    	height: 10px;
+    	/*border: 1px solid red;*/
+    }
+   #topicBox {
+    	height: 550px;
+    	/*border: 1px solid blue;*/
+    	overflow:auto;
+    	overflow-x:hidden;
+    	padding: 5px;
+    }
+	div.dateSource {
+		font-size: 0.80em;
+		color: gray;
+		padding-top: 2px;
+		/*border:1px solid red;*/
+		width:150px;
+		/*height:10px;*/
+	}
+	div#visDiv {
+		/*width:640px;*/
+		width:746px;
+		/*height:540px;*/
+		height:680px;
+		/*border:1px solid black;*/
+		position:absolute;
+		top:100px;
+		left:0px;
+	}
+	#removeTopics {
+		/*float: right;*/
+		position:absolute;
+		top:20px;
+		left:530px;
+	}
+	input[type="radio"] {
+	    -webkit-appearance: checkbox;
+	    -moz-appearance: checkbox;
+	    -ms-appearance: checkbox;     /* not currently supported */
+	    -o-appearance: checkbox;      /* not currently supported */
+	}​
+	</style>
+
+	<script type="text/javascript">
+	var myLayout; // a var is required because this page utilizes: myLayout.allowOverflow() method
+	$(document).ready(function () {
+		myLayout = $('body').layout({
+			// enable showOverflow on west-pane so popups will overlap north pane
+			west__showOverflowOnHover: true,
+			//applyDefaultStyles: true
+
+		//,	west__fxSettings_open: { easing: "easeOutBounce", duration: 750 }
+		});
+		//docViewLayout = $("body > .ui-layout-east").width(100);
+		myLayout.sizePane("east", 380);
+		// myLayout.sizePane("east", 500);
+		//myLayout.sizePane("center", 500);
+		myLayout.sizePane("west", 350);
+ 	});
+
+// // Slider for the query unit size
+//   $(function() {
+//     var select = $( "#queryUnitSize" ); // drop down list
+//     var slider = $( "<div id='slider_1'></div>" ).insertAfter( select ).slider({
+//       min: 1,
+//       max: 5,
+//       range: "min",
+//       // value: select[ 0 ].selectedIndex + 1,
+//       value: 2,
+//       slide: function( event, ui ) {
+//         select[ 0 ].selectedIndex = ui.value - 1;
+//       }
+//     });
+//     $("#queryUnitSize").val("5");
+
+//     $( "#queryUnitSize" ).change(function() {
+//       slider.slider( "value", this.selectedIndex + 1 );
+//     });
+//   });
+
+// Slider for a number of API returns
+	$(function() {
+	var select = $( "#numApiReturn" );
+	var slider = $( "<div id='slider_2'></div>" ).insertAfter( select ).slider({
+	  min: 1,
+	  max: 11,
+	  range: "min",
+	  value: 3,
+	  // value: select[ 0 ].selectedIndex + 1,
+	  slide: function( event, ui ) {
+	    select[ 0 ].selectedIndex = ui.value - 1;
+	  }
+	});
+	$("#numApiReturn").val("10");
+
+	$( "#numApiReturn" ).change(function() {
+	  slider.slider( "value", this.selectedIndex + 1 );
+	});
+	});
+
+	// Slider for the number of topics
+	$(function() {
+	var select = $( "#numtopics" );
+	var slider = $( "<div id='slider_3'></div>" ).insertAfter( select ).slider({
+	  min: 1,
+	  max: 7,
+	  range: "min",
+	  value: 4,
+	  // value: select[ 0 ].selectedIndex + 1,
+	  slide: function( event, ui ) {
+	    select[ 0 ].selectedIndex = ui.value - 1;
+	  }
+	});
+	$("#numtopics").val("15");
+
+	$( "#numtopics" ).change(function() {
+	  slider.slider( "value", this.selectedIndex + 1 );
+	});
+	});
+	</script>
+
+</head>
+<body>
+<div class="ui-layout-west">
+	<div  id="topBoxWest" class="topBox" align="center">
+	<form id="form1">
+		<label>Collection:</label>
+		<label><input type="radio" name="radio1" id="nytRadio" class="radioButton" checked="checked">NYT_1000</label>
+		<label><input type="radio" name="radio1" id="ctrRadio" class="radioButton">CTR_30</label>
+		<label><input type="radio" name="radio1" id="variousRadio" class="radioButton">VARIOUS_30</label>
+	</form>
+
+<p align="center">
+<button id="loadButton" style="">Load Documents</button>
+</p>
+
+</div>
+<div id="results">
+</div>
+</div>
+
+<div class="ui-layout-east">
+    <div id="topBoxEast" class="topBox" align="center">
+    <form id="form2">
+    	<label>Topics:</label>
+    	<label><input type="radio" name="radio2" id="nounRadio" class="radioButton" checked="checked">Nouns</label>
+    	<label><input type="radio" name="radio2" id="verbRadio" class="radioButton">Verbs</label>
+    	<label><input type="radio" name="radio2" id="nounverbRadio" class="radioButton">Nouns &amp; Verbs</label>
+    </form>
+
+	<p align="center">
+	<button id="extractButton" style="">Extract Topics</button>
+	</p>
+
+	</div>	
+
+	<script type="text/javascript" charset="utf-8">
+		// disable the two extraction options until they are implemented
+		$('#verbRadio').attr('disabled', true);
+		$('#nounverbRadio').attr('disabled', true);
+		
+	</script>
+
+<div id="paddingBox">	
+<!-- <form id="form3">
+  <label for="queryUnitSize">Size of query unit</label>
+  <select name="queryUnitSize" id="queryUnitSize">
+    <option>1</option>
+    <option>5</option>
+    <option>10</option>
+    <option>15</option>
+    <option>20</option>
+  </select>
+  <br>
+</form> -->
+
+<form id="form4">
+  <label for="numApiReturn">Number of API results</label>
+  <select name="numApiReturn" id="numApiReturn">
+    <option>1</option>
+	<option>5</option>
+    <option>10</option>
+    <option>15</option>
+    <option>20</option>
+    <option>25</option>
+    <option>30</option>
+    <option>35</option>
+    <option>40</option>
+	<option>45</option>
+	<option>50</option>
+  </select>
+  <br> 
+</form>
+
+<form id="form5">
+  <label for="numtopics">Number of Topics</label>
+  <select name="numtopics" id="numtopics">
+    	<option>1</option>
+	    <option>5</option>
+ 	    <option>10</option>
+	    <option>15</option>
+	    <option>20</option>
+	    <option>25</option>
+	    <option>30</option>
+  </select>
+  <br>
+
+</form>
+
+	<div id="bufferBox">
+	</div>
+	<div id="topicBox" align="left">
+	</div>
+
+</div>
+</div>
+
+	<div class="ui-layout-center" >
+    <div id="topBoxCenter" class="topBox">
+    <h2 align="center">  Document </h2>
+    </div>    
+    <div id="singleText"></div>
+
+    <script type="text/javascript" charset="utf-8">
+    var topic_max = 0; 
+    var prevClickedNodeId = "";
+    var prevRelated_topic_index = [];
+	
+    // function fires when the 'Load Document' button is pressed.
+    function on_load() {
+    	// console.log("on_load was called!!");
+    	// find which corpus radio button is checked, and do action
+    	var corpus = "";
+    	bar_ids = [];
+    	if ($('#nytRadio').is(':checked')) {
+    		// alert("nytRadio checked");
+    		corpus = "nyt";	
+     	};
+    	if ($('#ctrRadio').is(':checked')) {
+    		// alert("ctrRadio checked");
+    		corpus = "ctr";      		
+     	};
+    	if ($('#variousRadio').is(':checked')) {
+    		// alert("variousRadio checked");
+    		corpus = "various";        		      	
+    	};
+    	// console.log(corpus);
+    	$('.ui-layout-west').animate({scrollTop: 0}, 'fast');
+    	$('#topBoxCenter').empty();
+    	$('#topBoxCenter').append('<h2 align="center">Document</h2>');
+    	$('#topicBox').empty();
+    	// $('#topicBox').append('<h3 align="center">Suggested Topics</h3>');
+
+    	// empty Document pane
+    	$('#singleText').empty();
+    	$('#results').empty();
+
+        // // no. results hard-coded to 100, a bigger number than the no. docs. 
+        var url_result = 'hostname:port_number/solr/collection1/select?q=corpus%3A'+ corpus +'&wt=json&json.wrf=?&indent=true&rows=30';
+        
+        $.ajax({
+        	type: 'GET',
+        	url: url_result,
+        	dataType: 'json',
+        	success: function(data) {
+        		var result_count = data.response.numFound;
+        		// console.log(result_count);
+        		// console.log(data);
+        		var docs = data.response.docs;
+        		$.each(docs, function(i, item) {
+        			// console.log(i);
+        			// title_text = item.nyt_title;
+        			var doc_id = "";
+        			var titleStr = "";
+        			if (corpus == 'nyt') {
+        				doc_id = item.nyt_doc_id;
+        				titleStr = item.nyt_title;
+        			} else {
+        				doc_id = item.web_doc_id;
+        				titleStr = item.web_title;
+        			}
+        			// console.log(doc_id);			
+	                if (typeof titleStr == 'undefined') {
+	                	titleStr = "No title provided";
+	                };
+	                titleStr_sliced = titleStr.slice(0, 40);
+	                // if (item.titleText.length > 30) {
+	                if (titleStr.length > 40) {
+	                	titleStr_sliced += "...";
+	                };
+	                // box_text = (i + 1) + ": " + titleStr_sliced;
+        			box_text = (i + 1) + ": " + titleStr;
+        			$('#results').append($('<div class="bar" id="' + doc_id + '">' + box_text + '</div>'));
+        		});
+        	},
+        	async: false
+        });      	
+     
+    } // function on_load()
+    // check array element's existence
+    function inArray(array, value) {
+	    for (var i = 0; i < array.length; i++) {
+	        if (array[i] == value) return true;
+	    }
+	    return false;
+	}
+
+    // function to get the top N frequent words
+    // text is a string, n is the number of words to extract
+	function getTopNWords(text, n)
+	{
+	    // var wordRegExp = /\w+(?:')?/g;
+	    var wordRegExp = /\w+(?:'\w{1,2})?/g;
+	    var words = {};
+	    var matches;
+	    var stop_li = ['the','a','and','to','in','is','of','on','with','s','from','it','1','5','are','at','that','were','be','should','could','would','this','2','3','23','monday','for','by','as','north','was','south','east','west','has','an','or','u','you','me','0','i','we','your','my','have','f','new','its','will','one','can', '000','not','how','what','when','where','who','more','may','he','she','they','per','up','down','off','their','our','been','t','his','her','had','about','today','yesterday','tomorrow','between','if','among','out','12','15','16','48','but','over','into','said','com','2012','2013','no','4','7','20','one','two','died','all','killed','after','before','other','others','than','like','st','sad','while','al','co','do','day','r'];
+	    while ((matches = wordRegExp.exec(text)) != null)
+	    {
+	        var word = matches[0].toLowerCase();
+	        // remove stopwords
+	        if (!inArray(stop_li, word)) {
+		        if (typeof words[word] == "undefined")
+		        {
+		            words[word] = 1;
+		        }
+		        else
+		        {
+		            words[word]++;
+		        }
+	    	}
+	    }
+	    var wordList = [];
+	    for (var word in words)
+	    {
+	        if (words.hasOwnProperty(word))
+	        {
+	            wordList.push([word, words[word]]);
+	        }
+	    }
+	    wordList.sort(function(a, b) { return b[1] - a[1]; });
+	    var topWords = [];
+	    for (var i = 0; i < n; i++)
+	    {
+	        topWords.push(wordList[i][0]);
+	    }
+	    return topWords;
+	} // getTopicWords()
+
+    // function to extract topics
+    function on_extract() {
+    	// get the parameter info
+    	// no. of query unit size
+    	var query_unit_size = $('#queryUnitSize').val();
+    	// no. of API returns
+    	var no_api_return = $('#numApiReturn').val();
+    	// no. of topics
+    	var no_topics = $('#numtopics').val();
+    	// clean the topicBox div to add new topics
+    	$('#topicBox').empty();
+    	$('#topicBox').append('<h3 align="center">Suggested Topics</h3>');
+    	$('#topicBox').append('<div align="center">Click to highlight topics<br><br></div>');
+
+    	// check if the user opened a document
+    	if ($('#doc_text').length) {
+    		var all_joined_txt = "";
+    		var url_expanded_info = "";
+    		// extract doc_id
+    		var id_part = $('#topBoxCenter').text().split(": ")[1];
+    		if (id_part.split('_').length == 1) {  // nyt case
+    			// console.log(id_part);
+    			url_expanded_info = 'hostname:port_number/solr/collection1/select?q=nyt_doc_content%3A0+AND+nyt_doc_id%3A'+ id_part +'&rows=1000&json.wrf=?&wt=json';
+    			// extract API expanded data
+    			$.getJSON(url_expanded_info, function(data) {
+	     		 	var docs = data.response.docs;
+	     		 	$.each(docs, function(i, item) {
+	     		 		// var nyt_query = item.nyt_query;
+            			//get the API results
+            			var nyt_results = item.nyt_results;
+            			var results_sliced = nyt_results.split('|').slice(0,no_api_return);
+            			// console.log(results_sliced);
+            			var joined_txt = results_sliced.join(' ');
+            			// console.log(joined_txt);
+            			all_joined_txt = all_joined_txt + " " + joined_txt;
+        			});
+	     		 	// console.log(all_joined_txt);
+	     		 	var final_topic_li = getTopNWords(all_joined_txt, no_topics);
+	     		 	$.each(final_topic_li, function (i, item) {
+	     		 		$('#topicBox').append('<div class="multiColumn" align="center">'+ item +'</div>');
+	     		 	});
+     			}); // getJSON
+    		} else { // either ctr or various case
+    			console.log(id_part);
+    			url_expanded_info = 'hostname:port_number/solr/collection1/select?q=web_doc_content%3A0+AND+web_doc_id%3A'+ id_part +'&rows=1000&json.wrf=?&wt=json';
+    			// extract API expanded data
+    			$.getJSON(url_expanded_info, function(data) {
+    				console.log(data.response.docs.length);
+	     		 	var docs = data.response.docs;
+	     		 	$.each(docs, function(i, item) {
+	     		 		// var nyt_query = item.nyt_query;
+            			//get the API results
+            			var web_results = item.web_results;
+            			var results_sliced = web_results.split('|').slice(0,no_api_return);
+            			// console.log(results_sliced);
+            			var joined_txt = results_sliced.join(' ');
+            			// console.log(joined_txt);
+            			all_joined_txt = all_joined_txt + " " + joined_txt;
+        			});
+	     		 	// console.log(all_joined_txt);
+	     		 	var final_topic_li = getTopNWords(all_joined_txt, no_topics);
+	     		 	$.each(final_topic_li, function (i, item) {
+	     		 		$('#topicBox').append('<div class="multiColumn" align="center">'+ item +'</div>');
+	     		 	});
+     			}); // getJSON
+    		}
+    	// since no document was presented, no action
+    	} else {
+    		alert("Please select a document to extract topics!");       		
+    	}
+    } // on_extract()
+
+    // wait for the 'Search' button to be clicked
+    function on_ready() {
+        // resize the height of panes following the resize of the browser 
+        // var docHeight = $(window).height();
+        // console.log(docHeight);
+
+        // calls on_load() when the button is clicked
+        $('#loadButton').click(on_load);
+
+        // calls on_extract() when the button is clicked
+        $('#extractButton').click(on_extract);
+        
+        $('.multiColumn').live("click", function() {
+        	var bgcolor = $(this).css("background-color");
+        	// alert(bgcolor);
+        	if (bgcolor == "rgb(240, 248, 255)") {
+        		$(this).css("background-color", "yellow");	
+        	} else {
+        		$(this).css("background-color", "aliceblue");
+        	}
+        });
+        // be sure to use 'live' to make generated div clickable
+		$("div.bar").live("click", function(){
+			$('#topicBox').empty();
+     		// window.location=$(this).find("a").attr("href"); 
+     		// return false;
+     		$(".bar").css("background-color", "#F0F0F0");
+     		$(this).css("background-color", "lightblue");
+     		
+     		// extract id of the clicked div
+     		var docID = $(this).attr('id');
+     		var url_single_doc = "";
+     		// console.log(docID.split('_').length);
+     		if (docID.split('_').length == 1) {
+     			url_single_doc = 'hostname:port_number/solr/collection1/select?q=nyt_doc_content%3A1%20AND%20nyt_doc_id%3A' + docID + '&wt=json&json.wrf=?';
+     		} else {
+     			url_single_doc = 'hostname:port_number/solr/collection1/select?q=web_doc_content%3A1%20AND%20web_doc_id%3A' + docID + '&wt=json&json.wrf=?';
+     		}
+     		$.getJSON(url_single_doc, function(data) {
+     		 	var docs = data.response.docs;
+     		 	var doc_id = "";
+     		 	var content = "";
+     		 	var contentWithBreaks = "";
+     			// console.log(docs[0].corpus);
+     			$('#topBoxCenter').empty();
+     			if (docs[0].corpus == 'nyt') {
+     				doc_id = docs[0].nyt_doc_id;
+     				content = docs[0].nyt_text;
+     				contentWithBreaks = content.replace(/\n/g, '<br /><br />');
+     			} else {
+     				doc_id = docs[0].web_doc_id;
+     				content = docs[0].web_text;
+     				contentWithBreaks = content.replace(/\n/g, '<br />');
+     			}
+     			// $('#selectedDocInfo').empty();
+     			$('#topBoxCenter').append('<h2 align="center">Document ID: ' + doc_id + '</h2>');
+     		 	$('#singleText').empty();	
+     		 	$('#singleText').animate({scrollTop: 0}, 'fast');     		 
+     		 	$('#singleText').append('<p id="doc_text">' + contentWithBreaks + '</p>');	
+     		}); // getJSON
+		});
+    }
+	$(document).ready(on_ready);
+	</script>
+</div>
+</body>
+</html>
