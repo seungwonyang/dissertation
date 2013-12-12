@@ -1,5 +1,5 @@
 <strong>code</strong><br>
-: This folder contains code for running Xpantrac.
+: This folder contains code for running Xpantrac batch mode, as well as the UI of Xpantrac.
 
 <strong>dataset</strong><br>
 : This folder has three datasets used in this study.  They are CTR_30 (homogeneous), VARIOUS_30 (heterogeneous), and NYT_1000 (New York Times articles).
