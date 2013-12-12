@@ -1,6 +1,12 @@
 
 code folder
 ---------------
+<strong>d3 folder</strong><br>
+: It is a JavaScript library (http://d3js.org/) used along with the Xpantrac UI.
+
+<strong>Xpantrac_UI.html</strong><br>
+: It is a user interface for Xpantrac, which communicates with SOLR, used for the usability study.
+
 <strong>custom_stops.txt</strong><br>
 : It contains additional stopwords.
 
